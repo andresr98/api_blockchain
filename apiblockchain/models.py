@@ -4,6 +4,7 @@ from django.db import models
 class Account(models.Model):
     balance = models.FloatField(blank = True, default = 0.0)
     address = models.CharField(blank = True, max_length = 255)
+    mine = models.BooleanField(default = False)
 
 class Header(models.Model):
     nonce = models.IntegerField(blank = True, default = 0)
