@@ -6,6 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Header
 from .logic.accounts_bl import *
 from .logic.transactions_bl import *
+from .logic.headers_bl import *
+from .logic.blocks_bl import *
 import hashlib
 
 # Create your views here.
@@ -71,13 +73,20 @@ class Configurations(APIView):
             max_coins = data['max_coins']
             max_tx = data['max_tx']
 
-            result = create_mine_account(max_coins)
+            result, mine_address = create_mine_account(max_coins)
             if not result:
                 return Response({"status": status.HTTP_202_ACCEPTED, "entity":"", "error": "Configuration has alredy been done"},\
                 status=status.HTTP_202_ACCEPTED)
             else:
-                print("Creando genesis")
-            
+                insert_transaction(mine_address, max_coins, mine_address)
+                result = mine_genesis_block(mine_address, max_coins)
+
+                if result:
+                    return Response({"status": status.HTTP_201_CREATED, "entity":"Configuration and genesis block created", "error": ""},\
+                    status=status.HTTP_201_CREATED)
+                    
+                return Response({"status": status.HTTP_500_INTERNAL_SERVER_ERROR, "entity":"", "error": "Configuration has finished with an error"},\
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except KeyError:
             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity":"", "error": "Campos ingresador de forma incorrecta"},\
             status=status.HTTP_400_BAD_REQUEST)

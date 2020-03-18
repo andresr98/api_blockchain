@@ -44,10 +44,17 @@ def transfer(from_account, quantity, to_account):
 def create_mine_account(max_coins):
     try:
         miner_account = Account.objects.get(mine=True)
-        return False
+        return False, None
     except Account.DoesNotExist:
         password = "miner account"
         address = hashlib.sha256(password.encode()).hexdigest()
         account = Account(balance=max_coins, address=address, mine=True)
         account.save()
-        return True
+        return True, address
+
+def get_mine_account():
+    try:
+        miner_account = Account.objects.get(mine=True)
+        return miner_account
+    except Account.DoesNotExist:
+         return None

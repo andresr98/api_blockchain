@@ -6,9 +6,6 @@ max_transactions = 3
 
 def can_insert_transaction():
     if len(transactions) >= max_transactions:
-
-        for transaction in transactions:
-            print("P.K1 " + str(transaction.from_account) + " P.K 2" + str(transaction.to_account))
         return False
     return True
 
@@ -19,3 +16,29 @@ def insert_transaction(from_account, quantity, to_account):
 def get_transactions_in_block(hash):
     txs = Transaction.objects.filter(block=hash)
     return txs
+
+def get_current_transactions():
+    return transactions
+
+def get_hash_current_transactions():
+    hash_txs = []
+
+    for transaction in transactions:
+        string_tx = "P.K1 " + str(transaction.from_account) + " P.K 2" + str(transaction.to_account)
+        hash_tx = hashlib.sha256(string_tx.encode()).hexdigest()
+        hash_txs.append(hash_tx)
+    return hash_txs
+
+def reset_transactions():
+    transactions = []
+
+def save_current_transactions(block):
+    for transaction in transactions:
+        try:
+            transaction.block = block
+            transaction.save()
+        except Exception:
+            return False
+    reset_transactions()
+    return True
+        

@@ -8,4 +8,5 @@ urlpatterns = [
     path('transfer', views.Transfers.as_view(), name='Transfers'),
     path('blockchain', views.Blockchains.as_view(), name='blockchain'),
     path('blockchain/<slug:hash>', views.Transactions.as_view(), name="block-contain"),
+    path('configure', views.Configurations.as_view(), name="Configurations"),
 ]
