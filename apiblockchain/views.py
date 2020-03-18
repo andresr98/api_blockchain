@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from .logic.accounts_bl import *
+from .logic.transactions_bl import *
 import hashlib
 
 # Create your views here.
@@ -36,6 +37,10 @@ class Transfers(APIView):
             to_account = data['to_account']
             sign = data['sign']
 
+            if not can_insert_transaction():
+                return Response({"status": status.HTTP_202_ACCEPTED, "entity":"", "error": "Maximum transactions per block reached. Please mine a new block."},\
+                status=status.HTTP_202_ACCEPTED)
+
             if not validate_sign(sign, from_account):
                 return Response({"status": status.HTTP_400_BAD_REQUEST, "entity":"", "error": "Sign does not match from account. Please verify"},\
                 status=status.HTTP_400_BAD_REQUEST)
@@ -49,10 +54,29 @@ class Transfers(APIView):
             if not transfer(f_account, quantity, t_account):
                 return Response({"status": status.HTTP_202_ACCEPTED, "entity":"", "error": "From Account does not have sufficient balance"},\
                 status=status.HTTP_202_ACCEPTED)
-
+            
+            insert_transaction(from_account, quantity, to_account)
             return Response({"status": status.HTTP_201_CREATED, "entity":"Transaction complete", "error": ""},\
                 status=status.HTTP_201_CREATED)
 
+        except KeyError:
+            return Response({"status": status.HTTP_400_BAD_REQUEST, "entity":"", "error": "Campos ingresador de forma incorrecta"},\
+            status=status.HTTP_400_BAD_REQUEST)
+
+class Configurations(APIView):
+    def post(self, request):
+        try:
+            data = request.data
+            max_coins = data['max_coins']
+            max_tx = data['max_tx']
+
+            result = create_mine_account(max_coins)
+            if not result:
+                return Response({"status": status.HTTP_202_ACCEPTED, "entity":"", "error": "Configuration has alredy been done"},\
+                status=status.HTTP_202_ACCEPTED)
+            else:
+                print("Creando genesis")
+            
         except KeyError:
             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity":"", "error": "Campos ingresador de forma incorrecta"},\
             status=status.HTTP_400_BAD_REQUEST)
