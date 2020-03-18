@@ -16,3 +16,6 @@ def insert_transaction(from_account, quantity, to_account):
     transaction = Transaction(from_account=from_account, quantity=quantity,to_account=to_account, block =None)
     transactions.append(transaction)
 
+def get_transactions_in_block(hash):
+    txs = Transaction.objects.filter(block=hash)
+    return txs

@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
+from .models import Header
 from .logic.accounts_bl import *
 from .logic.transactions_bl import *
 import hashlib
@@ -77,6 +78,23 @@ class Configurations(APIView):
             else:
                 print("Creando genesis")
             
+        except KeyError:
+            return Response({"status": status.HTTP_400_BAD_REQUEST, "entity":"", "error": "Campos ingresador de forma incorrecta"},\
+            status=status.HTTP_400_BAD_REQUEST)
+
+class Blockchains(APIView):
+    def get(self, request):
+        headers = Header.objects.order_by('high')
+
+        return Response({"status": status.HTTP_200_OK, "entity": headers, "error": ""},\
+                status=status.HTTP_200_OK)
+
+class Transactions(APIView):
+    def get(self, request, hash):
+        try:
+            transactions = get_transactions_in_block(hash)
+            return Response({"status": status.HTTP_200_OK, "entity":transactions, "error": ""},\
+                status=status.HTTP_200_OK)
         except KeyError:
             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity":"", "error": "Campos ingresador de forma incorrecta"},\
             status=status.HTTP_400_BAD_REQUEST)
