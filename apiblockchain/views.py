@@ -93,7 +93,7 @@ class Configurations(APIView):
 
 class Blockchains(APIView):
     def get(self, request):
-        headers = Header.objects.order_by('high')
+        headers = Header.objects.values('nonce', 'prev_hash', 'merkle_root', 'high', 'own_hash', 'difficult').order_by('high')
 
         return Response({"status": status.HTTP_200_OK, "entity": headers, "error": ""},\
                 status=status.HTTP_200_OK)

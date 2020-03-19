@@ -14,7 +14,7 @@ def insert_transaction(from_account, quantity, to_account):
     transactions.append(transaction)
 
 def get_transactions_in_block(hash):
-    txs = Transaction.objects.filter(block=hash)
+    txs = Transaction.objects.values('from_account', 'quantity', 'to_account').filter(block=hash)
     return txs
 
 def get_current_transactions():
