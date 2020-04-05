@@ -30,10 +30,9 @@ def get_hash_current_transactions():
     return hash_txs
 
 def reset_transactions():
-    self.transactions = []
+    transactions.clear()
 
 def save_current_transactions(block):
-    print(transactions)
     for transaction in transactions:
         try:
             transaction.block = block
