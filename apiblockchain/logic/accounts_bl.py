@@ -29,6 +29,13 @@ def get_accounts(from_account, to_account):
     except Account.DoesNotExist:
         return None, None
 
+def get_account(address):
+    try:
+        account = Account.objects.get(address=address)
+        return account
+    except Account.DoesNotExist:
+        return None
+
 def transfer(from_account, quantity, to_account):
     from_balance = from_account.balance
 

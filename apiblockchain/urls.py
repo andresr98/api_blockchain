@@ -9,4 +9,5 @@ urlpatterns = [
     path('blockchain', views.Blockchains.as_view(), name='blockchain'),
     path('blockchain/<slug:hash>', views.Transactions.as_view(), name="block-contain"),
     path('configure', views.Configurations.as_view(), name="Configurations"),
+    path('to-mine', views.Mines.as_view(), name="Mine a new block"),
 ]

@@ -2,7 +2,7 @@ from apiblockchain.models import Transaction
 import hashlib
 
 transactions = []
-max_transactions = 3
+max_transactions = 5
 
 def can_insert_transaction():
     if len(transactions) >= max_transactions:
@@ -30,9 +30,10 @@ def get_hash_current_transactions():
     return hash_txs
 
 def reset_transactions():
-    transactions = []
+    self.transactions = []
 
 def save_current_transactions(block):
+    print(transactions)
     for transaction in transactions:
         try:
             transaction.block = block
